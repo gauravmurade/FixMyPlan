@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <body>
+	Please Enter the following details :
+		<br>
+		<br>
+    <form action="/resources" method="post">
+      <div>Resource Name : <input name="name" rows="1" cols="15"></input></div>
+		<br>
+      <div>Start Time : <input name="startTime" rows="1" cols="15"></input></div>
+		<br>
+      <div>End Time : <input name="endTime" rows="1" cols="15"></input></div>
+		<br>
+      <div>Enter Tags : <input name="tags" rows="1" cols="15"></input></div>
+		<br>
+      <div><input type="submit" value="Create the resource"></div>
+    </form>
+
+  </body>
+</html>
+{% endautoescape %}
