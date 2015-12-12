@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <body>
+	Resource Details :
+		<br>
+		<br>
+		Resource Name : {{ thisResource.name }}
+		<br>
+		Start Time : {{ thisResource.startTime }}
+		<br>
+		End Time : {{ thisResource.endTime }}
+		<br>
+		Duration : {{ thisResource.endTime }}
+		<br>
+		<br>
+	Current and Future Reservations :
+		<br>
+		<br>
+		{% for activeReservation in activeReservations %}
+			Resource Name : {{ activeReservation.name }}
+			<br>
+			Start Time : {{ activeReservation.startTime }}
+			<br>
+			End Time : {{ activeReservation.endTime }}
+			<br>
+			Duration : {{ activeReservation.endTime }}
+			<br>
+			<br>
+		{% endfor %}
+
+    <a href="{{ createReservationURL }}">Create a reservation</a>
+
+	</body>
+</html>
+{% endautoescape %}

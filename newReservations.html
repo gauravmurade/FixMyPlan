@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <body>
+	Please Enter the following details :
+		<br>
+		<br>
+    <form action="{{ resourceName }}" method="post">
+      <div>Start Time : <input name="startTime" rows="1" cols="15"></input></div>
+		<br>
+      <div>End Time : <input name="endTime" rows="1" cols="15"></input></div>
+		<br>
+      <div>Date : <input name="date" rows="1" cols="15"></input></div>
+		<br>
+      <div><input type="submit" value="Create the reservation"></div>
+    </form>
+
+  </body>
+</html>
+{% endautoescape %}
