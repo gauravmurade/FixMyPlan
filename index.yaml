@@ -36,8 +36,34 @@ indexes:
 
 - kind: Reservation
   properties:
+  - name: dateDay
+  - name: dateMonth
+  - name: dateYear
+  - name: name
+  - name: startTimeHour
+
+- kind: Reservation
+  properties:
+  - name: dateMonth
+  - name: dateYear
+  - name: name
+  - name: dateDay
+
+- kind: Reservation
+  properties:
+  - name: dateYear
+  - name: name
+  - name: dateMonth
+
+- kind: Reservation
+  properties:
   - name: name
   - name: date
+
+- kind: Reservation
+  properties:
+  - name: name
+  - name: dateYear
 
 - kind: Reservation
   properties:

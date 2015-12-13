@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+</head>
+  <body>
+	<div id="header">
+        <h1>FixMyPlan</h1>
+    </div>	
+	<div id="content">
+	Resources tagged under {{ tag }} are :
+		<br>
+		{% for taggedResource in taggedResources %}
+			<br>
+			<a href="/resources/{{ taggedResource.name }} "> {{ taggedResource.name }} </a>
+		{% endfor %}
+			<br>
+			<br>
+	</div>
+	</body>
+</html>
+{% endautoescape %}	

@@ -1,36 +1,48 @@
 <!DOCTYPE html>
 {% autoescape true %}
 <html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+</head>
   <body>
+	<div id="header">
+        <h1>FixMyPlan</h1>
+    </div>	
+	<div id="content">
 	Resource Details :
 		<br>
 		<br>
 		Resource Name : {{ thisResource.name }}
 		<br>
-		Start Time : {{ thisResource.startTime }}
+		Start Time : {{ thisResource.startTimeDisp }}
 		<br>
-		End Time : {{ thisResource.endTime }}
+		End Time : {{ thisResource.endTimeDisp }}
 		<br>
-		Duration : {{ thisResource.endTime }}
+		Tags : 
+		{% for tag in thisResource.tags %}
+			<a href="/tags/{{  tag  }} "> {{  tag  }} </a>
+		{% endfor %}
+		<br>
 		<br>
 		<br>
 	Current and Future Reservations :
 		<br>
 		<br>
 		{% for activeReservation in activeReservations %}
+			Reserved by : {{ user.email() }}
+			<br>
 			Resource Name : {{ activeReservation.name }}
 			<br>
-			Start Time : {{ activeReservation.startTime }}
+			Start Time : {{ activeReservation.startTimeDisp }} on 
+						 {{ activeReservation.dateDisp }}
 			<br>
-			End Time : {{ activeReservation.endTime }}
-			<br>
-			Duration : {{ activeReservation.endTime }}
+			Duration : {{ activeReservation.durationDisp }}
 			<br>
 			<br>
 		{% endfor %}
 
     <a href="{{ createReservationURL }}">Create a reservation</a>
-
+	</div>
 	</body>
 </html>
-{% endautoescape %}
+{% endautoescape %}	

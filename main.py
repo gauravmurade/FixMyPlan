@@ -2,7 +2,7 @@
 import os
 import urllib
 import logging
-import datetime
+from datetime import datetime
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -31,39 +31,64 @@ class Resource(ndb.Model):
 	"""A main model for representing an individual Guestbook entry."""
 	owner = ndb.StringProperty(required=True)
 	name = ndb.StringProperty(required=True)
-	startTime = ndb.TimeProperty(required=True)
-	endTime = ndb.TimeProperty(required=True)
+	startTimeHour = ndb.IntegerProperty(required=True)
+	startTimeMin = ndb.IntegerProperty(required=True)
+	startTime = ndb.DateTimeProperty(required=True)
+	startTimeDisp = ndb.StringProperty(required=True)
+	endTimeHour = ndb.IntegerProperty(required=True)
+	endTimeMin = ndb.IntegerProperty(required=True)
+	endTime = ndb.DateTimeProperty(required=True)
+	endTimeDisp = ndb.StringProperty(required=True)
 	tags = ndb.StringProperty(repeated=True)
 
 class Reservation(ndb.Model):
 	"""A main model for representing an individual Guestbook entry."""
 	owner = ndb.StringProperty(required=True)
 	name = ndb.StringProperty(required=True)
-	startTime = ndb.TimeProperty(required=True)
-	endTime = ndb.TimeProperty(required=True)
-	date = ndb.DateProperty(required=True)
+	startTimeHour = ndb.IntegerProperty(required=True)
+	startTimeMin = ndb.IntegerProperty(required=True)
+	startTime = ndb.DateTimeProperty(required=True)
+	startTimeDisp = ndb.StringProperty(required=True)
+#	endTimeHour = ndb.IntegerProperty(required=True)
+#	endTimeMin = ndb.IntegerProperty(required=True)
+	durationHour = ndb.IntegerProperty(required=True)
+	durationMin = ndb.IntegerProperty(required=True)
+	durationTime = ndb.DateTimeProperty(required=True)
+	durationDisp = ndb.StringProperty(required=True)
+	dateDay = ndb.IntegerProperty(required=True)
+	dateMonth = ndb.IntegerProperty(required=True)
+	dateYear = ndb.IntegerProperty(required=True)
+	date = ndb.DateTimeProperty(required=True)
+	dateDisp = ndb.StringProperty(required=True)
 	
 class MainPage(webapp2.RequestHandler):
     def get(self):
-		
-		myReservations = Reservation.query(Reservation.owner == users.get_current_user().user_id()).get()
-#		logging.debug(users.get_current_user().user_id())
-		
 		user = users.get_current_user()
 		
 		if user:
 			url = users.create_logout_url(self.request.uri)
 			url_linktext = 'Logout'
+			myReservations = Reservation.query(Reservation.owner == users.get_current_user().user_id())
+			myResources = Resource.query(Resource.owner == users.get_current_user().user_id())
+			allResources = Resource.query()
+			logging.debug(users.get_current_user().user_id())
+			template_values = {
+				'myResources': myResources,
+				'myReservations': myReservations,
+				'allResources': allResources,
+				'user': user,
+				'url': url,
+				'url_linktext': url_linktext,
+			}
 		else:
 			url = users.create_login_url(self.request.uri)
 			url_linktext = 'Login'
+			template_values = {
+				'user': user,
+				'url': url,
+				'url_linktext': url_linktext,
+			}
 		
-		template_values = {
-            'myReservations': myReservations,
-            'user': user,
-            'url': url,
-            'url_linktext': url_linktext,
-        }
 		template = JINJA_ENVIRONMENT.get_template('index.html')
 		self.response.write(template.render(template_values))
 
@@ -97,21 +122,69 @@ class NewResources(webapp2.RequestHandler):
 		newResource = Resource()
 		newResource.owner = users.get_current_user().user_id()
 		newResource.name = self.request.get('name')
-		newResource.startTime = datetime.datetime.strptime(self.request.get('startTime'), '%H:%M').time()
-		newResource.endTime = datetime.datetime.strptime(self.request.get('endTime'), '%H:%M').time()
-		newResource.tags = list(set(self.request.get('tags')))
+
+		StartTimeHour = self.request.get('StartTimeHour')
+		StartTimeMin = self.request.get('StartTimeMin')
+		StartTimeFormat = self.request.get('StartTimeFormat')
+		if StartTimeFormat == 'AM' and StartTimeHour == '12':
+			StartTimeHour = '00'
+		if StartTimeFormat == 'PM' and StartTimeHour != '12':
+			StartTimeHour = str(int(StartTimeHour) + 12)
+		newResource.startTimeHour = int(StartTimeHour)
+		newResource.startTimeMin = int(StartTimeMin)
+		StartTime = StartTimeHour + ':' + StartTimeMin + ':' + StartTimeFormat
+		newResource.startTime = datetime.strptime(StartTime, "%H:%M:%p")
+		newResource.startTimeDisp = datetime.strftime(newResource.startTime, "%H:%M %p")
+		
+		EndTimeHour = self.request.get('EndTimeHour')
+		EndTimeMin = self.request.get('EndTimeMin')
+		EndTimeFormat = self.request.get('EndTimeFormat')	
+		if EndTimeFormat == 'AM' and EndTimeHour == '12':
+			EndTimeHour = '00'
+		if EndTimeFormat == 'PM' and EndTimeHour != '12':
+			EndTimeHour = str(int(EndTimeHour) + 12)
+		newResource.endTimeHour = int(EndTimeHour)
+		newResource.endTimeMin = int(EndTimeMin)
+		EndTime = EndTimeHour + ':' + EndTimeMin + ':' + EndTimeFormat
+		newResource.endTime = datetime.strptime(EndTime, "%H:%M:%p")
+		newResource.endTimeDisp = datetime.strftime(newResource.endTime, "%H:%M %p")
+
+		newResource.tags = (self.request.get('tags')).split()
 		newResource.put()
 		self.redirect('/resources/' + newResource.name)
 
 class Resources(webapp2.RequestHandler):
     def get(self):
 		words = (self.request.url).split("/")
+		user = users.get_current_user()
+
 		thisResource = Resource.query(Resource.name == words[4]).get()
 		allReservations = Reservation.query(Reservation.name == words[4])
-		activeReservations = allReservations.filter(ndb.OR(Reservation.date > datetime.date.today(), ndb.AND(Reservation.date == datetime.datetime.now().date(), Reservation.startTime >= datetime.datetime.now().time())))
-#		logging.debug(thisResource.count())
+		activeReservations = allReservations.filter(ndb.OR(
+			Reservation.dateYear > datetime.now().year,
+			ndb.AND(Reservation.dateYear == datetime.now().year, 
+			Reservation.dateMonth > datetime.now().month),
+			ndb.AND(Reservation.dateYear == datetime.now().year, 
+			Reservation.dateMonth == datetime.now().month,
+			Reservation.dateDay > datetime.now().day),
+			ndb.AND(Reservation.dateYear == datetime.now().year, 
+			Reservation.dateMonth == datetime.now().month,
+			Reservation.dateDay == datetime.now().day,
+			Reservation.startTimeHour > datetime.now().hour),
+			ndb.AND(Reservation.dateYear == datetime.now().year, 
+			Reservation.dateMonth == datetime.now().month,
+			Reservation.dateDay == datetime.now().day,
+			Reservation.startTimeHour == datetime.now().hour,
+			Reservation.startTimeMin == datetime.now().minute),
+			))
+
+		logging.debug(words)
+		logging.debug(allReservations.count())
+		logging.debug(activeReservations.count())
 		createReservationURL = '/reservations/' + words[4]
 		template_values = {
+			'user': user,
+			'thisResource': thisResource,
 			'thisResource': thisResource,
 			'activeReservations': activeReservations,
 			'createReservationURL' : createReservationURL,
@@ -130,14 +203,61 @@ class NewReservations(webapp2.RequestHandler):
 
     def post(self):
 		words = (self.request.url).split("/")
+
 		newReservation = Reservation()
 		newReservation.owner = users.get_current_user().user_id()
 		newReservation.name = words[4]
-		newReservation.startTime = datetime.datetime.strptime(self.request.get('startTime'), '%H:%M').time()
-		newReservation.endTime = datetime.datetime.strptime(self.request.get('endTime'), '%H:%M').time()
-		newReservation.date = datetime.datetime.strptime(self.request.get('date'), '%d%m%Y').date()
+
+		StartTimeHour = self.request.get('StartTimeHour')
+		StartTimeMin = self.request.get('StartTimeMin')
+		StartTimeFormat = self.request.get('StartTimeFormat')
+		if StartTimeFormat == 'AM' and StartTimeHour == '12':
+			StartTimeHour = '00'
+		if StartTimeFormat == 'PM' and StartTimeHour != '12':
+			StartTimeHour = str(int(StartTimeHour) + 12)
+		newReservation.startTimeHour = int(StartTimeHour)
+		newReservation.startTimeMin = int(StartTimeMin)
+		StartTime = StartTimeHour + ':' + StartTimeMin + ':' + StartTimeFormat
+		newReservation.startTime = datetime.strptime(StartTime, "%H:%M:%p")
+		newReservation.startTimeDisp = datetime.strftime(newReservation.startTime, "%H:%M %p")
+
+		DurationHour = self.request.get('DurationHour')
+		DurationMin = self.request.get('DurationMin')
+		newReservation.durationHour = int(DurationHour)
+		newReservation.durationMin = int(DurationMin)
+		DurationTime = DurationHour + ':' + DurationMin
+		newReservation.durationTime = datetime.strptime(DurationTime, "%H:%M")
+		newReservation.durationDisp = datetime.strftime(newReservation.durationTime, "%H hrs %M mins")
+
+
+		DateDay = self.request.get('DateDay')
+		DateMonth = self.request.get('DateMonth')
+		DateYear = self.request.get('DateYear')
+		newReservation.dateDay = int(DateDay)
+		newReservation.dateMonth = int(DateMonth)
+		newReservation.dateYear = int(DateYear)
+		Date = DateDay + ':' + DateMonth + ':' + DateYear
+		newReservation.date = datetime.strptime(Date, "%d:%m:%Y")
+		newReservation.dateDisp = datetime.strftime(newReservation.date, "%a, %d %b, %Y")
+
 		newReservation.put()
 		self.redirect('/resources/' + words[4])
+
+class Tags(webapp2.RequestHandler):
+    def get(self):
+		words = (self.request.url).split("/")
+		user = users.get_current_user()
+		tag = words[4]
+
+		taggedResources = Resource.query(Resource.tags == words[4])
+		
+		template_values = {
+			'tag': tag,
+			'taggedResources': taggedResources,
+		}
+		
+		template = JINJA_ENVIRONMENT.get_template('tags.html')
+		self.response.write(template.render(template_values))
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -145,4 +265,5 @@ app = webapp2.WSGIApplication([
     ('/resources', NewResources),
     ('/resources/.+', Resources),
     ('/reservations/.+', NewReservations),
+    ('/tags/.+', Tags),
 ], debug=True)

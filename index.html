@@ -1,23 +1,64 @@
 <!DOCTYPE html>
 {% autoescape true %}
 <html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+</head>
   <body>
-	Your Reservation Details :
+	<div id="header">
+        <h1>FixMyPlan</h1>
+    </div>	
+	<div id="content">
+	{% if user  %}
+		Your have made the following Reservations :
+			<br>
+			{% for myReservation in myReservations %}
+				<br>
+				Reserved by : {{ user.email() }}
+				<br>
+				Resource Name : {{ myReservation.name }}
+				<br>
+				Start Time : {{ myReservation.startTimeDisp }} on 
+							 {{ myReservation.dateDisp }}
+				<br>
+				Duration : {{ myReservation.durationDisp }}
+				<form action="" method="post">
+				  <button type="submit" value="Delete">Delete this reservation</button>
+				</form>
+				<br>
+			{% endfor %}
+
+		<br>
+		Resources available in the system :
+			<br>
+			{% for resource in allResources %}
+				<br>
+				<a href="/resources/{{ resource.name }} "> {{ resource.name }} </a>
+			{% endfor %}
 		<br>
 		<br>
-		Resource Name : {{ myReservations.name }}
-		<br>
-		Start Time : {{ myReservations.startTime }}
-		<br>
-		End Time : {{ myReservations.endTime }}
-		<br>
-		Duration : {{ myReservations.endTime }}
+		Resources owned by you :
+			<br>
+			{% for resource in myResources %}
+				<br>
+				<a href="/resources/{{ resource.name }} "> {{ resource.name }}</a>
+			{% endfor %}
 		<br>
 		<br>
 
-	<a href="/resources">Create a resource</a>
-    <a href="{{ url|safe }}">{{ url_linktext }}</a>
-
+		<a href="/resources">Create a resource</a>
+	</div>
+	{% else  %}
+	<div id="content">
+		You have not logged in yet!
+	</div>
+	{% endif %}
+		<br>
+		<br>
+	<div id="business">
+		<a href="{{ url|safe }}">{{ url_linktext }}</a>
+	</div>
+	
   </body>
 </html>
 {% endautoescape %}
