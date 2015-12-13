@@ -22,8 +22,9 @@
 							 {{ myReservation.dateDisp }}
 				<br>
 				Duration : {{ myReservation.durationDisp }}
-				<form action="" method="post">
-				  <button type="submit" value="Delete">Delete this reservation</button>
+				<br>
+				<form action="/reservations" method="post">
+					<button Onclick="return confirm('Are you sure you want to delete this item?');" type="submit" name="reservationKey" value="{{ myReservation.key.urlsafe() }}">Delete</button>
 				</form>
 				<br>
 			{% endfor %}

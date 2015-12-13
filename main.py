@@ -68,7 +68,7 @@ class MainPage(webapp2.RequestHandler):
 		if user:
 			url = users.create_logout_url(self.request.uri)
 			url_linktext = 'Logout'
-			myReservations = Reservation.query(Reservation.owner == users.get_current_user().user_id())
+			myReservations = Reservation.query(Reservation.owner == users.get_current_user().user_id()).order(Reservation.date).order(Reservation.startTime)
 			myResources = Resource.query(Resource.owner == users.get_current_user().user_id())
 			allResources = Resource.query()
 			logging.debug(users.get_current_user().user_id())
@@ -160,6 +160,7 @@ class Resources(webapp2.RequestHandler):
 
 		thisResource = Resource.query(Resource.name == words[4]).get()
 		allReservations = Reservation.query(Reservation.name == words[4])
+		'''		
 		activeReservations = allReservations.filter(ndb.OR(
 			Reservation.dateYear > datetime.now().year,
 			ndb.AND(Reservation.dateYear == datetime.now().year, 
@@ -176,6 +177,12 @@ class Resources(webapp2.RequestHandler):
 			Reservation.dateDay == datetime.now().day,
 			Reservation.startTimeHour == datetime.now().hour,
 			Reservation.startTimeMin == datetime.now().minute),
+			))
+			'''
+		activeReservations = allReservations.filter(ndb.OR(
+			Reservation.date > datetime.now(),
+			ndb.AND(Reservation.date == datetime.now(), 
+			Reservation.startTime > datetime.now()),
 			))
 
 		logging.debug(words)
@@ -259,11 +266,19 @@ class Tags(webapp2.RequestHandler):
 		template = JINJA_ENVIRONMENT.get_template('tags.html')
 		self.response.write(template.render(template_values))
 
+class DelReservations(webapp2.RequestHandler):
+	def post(self):
+		reservationKey = ndb.Key(urlsafe=self.request.get('reservationKey'))
+		logging.debug(reservationKey)
+		reservationKey.delete()
+		self.redirect('/')
+		
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/sign', Guestbook),
     ('/resources', NewResources),
     ('/resources/.+', Resources),
+    ('/reservations', DelReservations),
     ('/reservations/.+', NewReservations),
     ('/tags/.+', Tags),
 ], debug=True)

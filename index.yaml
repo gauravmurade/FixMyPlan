@@ -67,6 +67,12 @@ indexes:
 
 - kind: Reservation
   properties:
+  - name: owner
+  - name: date
+  - name: startTime
+
+- kind: Reservation
+  properties:
   - name: resource
   - name: date
 

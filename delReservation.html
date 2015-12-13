@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+</head>
+  <body>
+	<div id="header">
+        <h1>FixMyPlan</h1>
+    </div>	
+	<div id="content">
+		Are you sure you want to delete the following reservation?
+		<br>
+		<br>
+		Reserved by : {{ user.email() }}
+		<br>
+		Resource Name : {{ thisReservation.name }}
+		<br>
+		Start Time : {{ thisReservation.startTimeDisp }} on {{ thisReservation.dateDisp }}
+		<br>
+		Duration : {{ thisReservation.durationDisp }}
+		<br>
+		<br>
+		<form action="/reservations" method="get">
+		  <button name = "Yes" type="submit" value="Yes">Yes</button>
+		  <button name = "No" type="submit" value="No">No</button>
+		</form>
+	</div>
+  </body>
+</html>
+{% endautoescape %}
