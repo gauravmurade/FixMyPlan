@@ -3,7 +3,9 @@ import os
 import urllib
 import logging
 from datetime import datetime
-
+from xml.etree import ElementTree
+from xml.dom import minidom
+from xml.etree.ElementTree import Element, SubElement, Comment
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
@@ -22,6 +24,13 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 # will be consistent.  However, the write rate should be limited to
 # ~1/second.
 	
+def prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    rough_string = ElementTree.tostring(elem, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent="  ")
+
 class AppUser(ndb.Model):
     """Sub model for representing an author."""
     identity = ndb.StringProperty()
@@ -273,6 +282,32 @@ class DelReservations(webapp2.RequestHandler):
 		reservationKey.delete()
 		self.redirect('/')
 		
+class RSS(webapp2.RequestHandler):
+    def get(self):
+		words = (self.request.url).split("/")
+		tag = words[4]
+
+		allReservations = Reservation.query(Reservation.name == words[4])
+		user = users.get_current_user()
+		logging.debug(allReservations.count())
+
+		top = Element('channel')
+		title = SubElement(top, 'title')
+		title.text = 'Reservations for ' + words[4]
+		for reservation in allReservations:
+			item = SubElement(top, 'item')
+			ReservedBy = SubElement(item, 'ReservedBy')
+			ReservedBy.text = user.email()
+			ResourceName = SubElement(item, 'ResourceName')
+			ResourceName.text = reservation.name
+			StartTime = SubElement(item, 'StartTime')
+			StartTime.text = reservation.startTimeDisp + ' on ' + reservation.dateDisp
+			Duration = SubElement(item, 'Duration')
+			Duration.text = reservation.durationDisp
+		self.response.headers['Content-Type'] = 'text/xml'
+#		self.response.headers['Content-Disposition'] = 'attachment; filename=myfile.xml'
+		self.response.write(prettify(top))
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/sign', Guestbook),
@@ -281,4 +316,5 @@ app = webapp2.WSGIApplication([
     ('/reservations', DelReservations),
     ('/reservations/.+', NewReservations),
     ('/tags/.+', Tags),
+    ('/rss/.+', RSS),
 ], debug=True)
