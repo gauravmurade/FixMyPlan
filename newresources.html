@@ -9,14 +9,22 @@
         <h1>FixMyPlan</h1>
     </div>	
 	<div id="content">
-	Please Enter the following details :
+	{% if errorNo == 1 %}
+		<p style="color:red;">Please specify a resource name!</p>
+	{% elif errorNo == 2 %}
+		<p style="color:red;">End Time cannot be less than or equal to the Start Time!</p>
+	{% elif errorNo == 3 %}
+		<p style="color:red;">The resource name already exists. Please choose another name!</p>
+	{% endif %}	
+	
+	<strong>Please Enter the following details :</strong>
 		<br>
 		<br>
     <form action="/resources" method="post">
-      Resource Name : <input name="name" rows="1" cols="15"></input>
+      Resource Name : <input class = "tab" name="name" rows="1" cols="15"></input>
 		<br>
       Start Time : 
-		<select name="StartTimeHour">
+		<select name="StartTimeHour" class = "tab">
 		  <option value="01">01</option>
 		  <option value="02">02</option>
 		  <option value="03">03</option>
@@ -181,8 +189,14 @@
 		<br>
       Enter Tags : <input name="tags" rows="1" cols="15"></input>
 		<br>
+		<br>
       <input type="submit" value="Create the resource">
     </form>
+		<br>
+	</div>
+	<div id="business">
+		<a href="/" style = "float:left">Back to Home Page</a>
+		<a href="{{ url|safe }}" style = "float:right">{{ url_linktext }}</a>
 	</div>
   </body>
 </html>

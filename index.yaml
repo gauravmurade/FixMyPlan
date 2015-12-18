@@ -20,7 +20,19 @@ indexes:
   properties:
   - name: date
   - name: name
+  - name: endTime
+
+- kind: Reservation
+  properties:
+  - name: date
+  - name: name
   - name: startTime
+
+- kind: Reservation
+  properties:
+  - name: date
+  - name: owner
+  - name: endTime
 
 - kind: Reservation
   properties:
@@ -64,6 +76,12 @@ indexes:
   properties:
   - name: name
   - name: dateYear
+
+- kind: Reservation
+  properties:
+  - name: owner
+  - name: date
+  - name: endTime
 
 - kind: Reservation
   properties:

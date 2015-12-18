@@ -9,7 +9,20 @@
         <h1>FixMyPlan</h1>
     </div>	
 	<div id="content">
-	Please Enter the following details :
+	{% if errorNo == 1 %}
+		<p style="color:red;">Please select a duration!</p>
+	{% elif errorNo == 2 %}
+		<p style="color:red;">You cannot make a reservation in the past!</p>
+	{% elif errorNo == 3 %}
+		<p style="color:red;">Your reservation has to end before 12 AM the next day!</p>
+	{% elif errorNo == 4 %}
+		<p style="color:red;">There is an overlap with another reservation. Please check the existing reservations and try again!</p>
+	{% elif errorNo == 5 %}
+		<p style="color:red;">Your reservation must fall within the resource available times!</p>
+	{% elif errorNo == 6 %}
+		<p style="color:red;">End Time cannot be less than or equal to the Start Time!</p>
+	{% endif %}	
+	<strong>Please Enter the following details :</strong>
 		<br>
 		<br>
     <form action="{{ resourceName }}" method="post">
@@ -97,7 +110,7 @@
 		<br>
       Duration : 
 		<select name="DurationHour">
-		  <option value="1">0</option>
+		  <option value="0">0</option>
 		  <option value="1">1</option>
 		  <option value="2">2</option>
 		  <option value="3">3</option>
@@ -244,6 +257,10 @@
 		<br>
       <input type="submit" value="Create the reservation">
     </form>
+	</div>
+	<div id="business">
+		<a href="/" style = "float:left">Back to Home Page</a>
+		<a href="{{ url|safe }}" style = "float:right">{{ url_linktext }}</a>
 	</div>
   </body>
 </html>

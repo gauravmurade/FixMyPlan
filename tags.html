@@ -9,7 +9,7 @@
         <h1>FixMyPlan</h1>
     </div>	
 	<div id="content">
-	Resources tagged under {{ tag }} are :
+	<strong>Resources tagged under {{ tag }} are :</strong>
 		<br>
 		{% for taggedResource in taggedResources %}
 			<br>
@@ -17,6 +17,10 @@
 		{% endfor %}
 			<br>
 			<br>
+	</div>
+	<div id="business">
+		<a href="/" style = "float:left">Back to Home Page</a>
+		<a href="{{ url|safe }}" style = "float:right">{{ url_linktext }}</a>
 	</div>
 	</body>
 </html>

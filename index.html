@@ -5,18 +5,20 @@
   <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
 </head>
   <body>
-	<div id="header">
+	<div id="header" class="animated slideInLeft">
         <h1>FixMyPlan</h1>
     </div>	
 	<div id="content">
 	{% if user  %}
-		Your have made the following Reservations :
-			<br>
-			{% for myReservation in myReservations %}
+		<strong>Your have made the following Reservations :</strong>
+		<br>
+			{% for myReservation in myActiveReservations %}
 				<br>
-				Reserved by : {{ user.email() }}
+				Reserved by : 
+				<a href="/user"> {{ user.email() }} </a>
 				<br>
-				Resource Name : {{ myReservation.name }}
+				Resource Name : 
+				<a href="/resources/{{ myReservation.name }} "> {{ myReservation.name }} </a>
 				<br>
 				Start Time : {{ myReservation.startTimeDisp }} on 
 							 {{ myReservation.dateDisp }}
@@ -26,38 +28,44 @@
 				<form action="/reservations" method="post">
 					<button Onclick="return confirm('Are you sure you want to delete this item?');" type="submit" name="reservationKey" value="{{ myReservation.key.urlsafe() }}">Delete</button>
 				</form>
-				<br>
 			{% endfor %}
 
 		<br>
-		Resources available in the system :
-			<br>
-			{% for resource in allResources %}
+		{% if homePage != 0 %}
+			<strong>Resources available in the system :</strong>
 				<br>
-				<a href="/resources/{{ resource.name }} "> {{ resource.name }} </a>
-			{% endfor %}
+				{% for resource in allResources %}
+					<a href="/resources/{{ resource.name }} "> {{ resource.name }} </a>
+				{% endfor %}
+			<br>
+		{% endif %}
 		<br>
-		<br>
-		Resources owned by you :
+		<strong>Resources owned by you :</strong>
 			<br>
 			{% for resource in myResources %}
-				<br>
 				<a href="/resources/{{ resource.name }} "> {{ resource.name }}</a>
 			{% endfor %}
 		<br>
 		<br>
 
-		<a href="/resources">Create a resource</a>
+		{% if homePage != 0 %}
+			<a href="/resources">Create a resource</a>
+		{% endif %}
+		<br>
 	</div>
 	{% else  %}
 	<div id="content">
 		You have not logged in yet!
+		<br>
 	</div>
 	{% endif %}
-		<br>
-		<br>
 	<div id="business">
-		<a href="{{ url|safe }}">{{ url_linktext }}</a>
+		{% if homePage != 0 %}
+			<a href="{{ url|safe }}">{{ url_linktext }}</a>
+		{% else  %}
+			<a href="/" style = "float:left">Back to Home Page</a>
+			<a href="{{ url|safe }}" style = "float:right">{{ url_linktext }}</a>
+		{% endif %}
 	</div>
 	
   </body>
