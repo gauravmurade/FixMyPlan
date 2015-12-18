@@ -7,7 +7,7 @@
   <body>
 	<div id="header" class="animated slideInLeft">
         <h1>FixMyPlan</h1>
-    </div>	
+    </div>
 	<div id="content">
 	{% if user  %}
 		<strong>Your have made the following Reservations :</strong>
@@ -15,7 +15,7 @@
 			{% for myReservation in myActiveReservations %}
 				<br>
 				Reserved by : 
-				<a href="/user"> {{ user.email() }} </a>
+				<a href="/user"> {{ myReservation.owner }} </a>
 				<br>
 				Resource Name : 
 				<a href="/resources/{{ myReservation.name }} "> {{ myReservation.name }} </a>

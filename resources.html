@@ -4,7 +4,7 @@
 <head>
   <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
 </head>
-  <body>
+  <body onload="setDefaultValues()">
 	<div id="header">
         <h1>FixMyPlan</h1>
     </div>	
@@ -14,7 +14,7 @@
 		  Resource Name : <input name="name" rows="1" cols="15"></input>
 			<br>
 		  Start Time : 
-			<select name="StartTimeHour">
+			<select id = "STH" name="StartTimeHour">
 			  <option value="01">01</option>
 			  <option value="02">02</option>
 			  <option value="03">03</option>
@@ -28,7 +28,7 @@
 			  <option value="11">11</option>
 			  <option value="12">12</option>
 			</select>
-			<select name="StartTimeMin">
+			<select id = "STM" name="StartTimeMin">
 			  <option value="00">00</option>
 			  <option value="01">01</option>
 			  <option value="02">02</option>
@@ -90,13 +90,13 @@
 			  <option value="58">58</option>
 			  <option value="59">59</option>
 			</select>
-			<select name="StartTimeFormat">
+			<select id = "STF" name="StartTimeFormat">
 			  <option value="AM">AM</option>
 			  <option value="PM">PM</option>
 			</select>
 			<br>
 		  End Time : 
-			<select name="EndTimeHour">
+			<select id = "ETH" name="EndTimeHour">
 			  <option value="01">01</option>
 			  <option value="02">02</option>
 			  <option value="03">03</option>
@@ -110,7 +110,7 @@
 			  <option value="11">11</option>
 			  <option value="12">12</option>
 			</select>
-			<select name="EndTimeMin">
+			<select id = "ETM" name="EndTimeMin">
 			  <option value="00">00</option>
 			  <option value="01">01</option>
 			  <option value="02">02</option>
@@ -172,7 +172,7 @@
 			  <option value="58">58</option>
 			  <option value="59">59</option>
 			</select>
-			<select name="EndTimeFormat">
+			<select id = "ETF" name="EndTimeFormat">
 			  <option value="AM">AM</option>
 			  <option value="PM">PM</option>
 			</select>
@@ -204,7 +204,7 @@
 		<br>
 		{% for activeReservation in activeReservations %}
 			Reserved by : 
-			<a href="/user"> {{ user.email() }} </a>
+			<a href="/user"> {{ myReservation.owner }} </a>
 			<br>
 			Resource Name : 
 			<a href="/resources/{{ activeReservation.name }} "> {{ activeReservation.name }} </a>
@@ -224,6 +224,33 @@
 	<div id="business">
 		<a href="/" style = "float:left">Back to Home Page</a>
 		<a href="{{ url|safe }}" style = "float:right">{{ url_linktext }}</a>
+	</div>
+	<script>
+    function setDefaultValues(s, valsearch)
+    {
+		for (i = 0; i< s.options.length; i++)
+		{ 
+			if (s.options[i].value == valsearch)
+			{
+				s.options[i].selected = true;
+				break;
+			}
+		}
+		return;			
+	}
+	var STH = "{{ thisResource.startTimeHour }}";
+	var STM = "{{ thisResource.startTimeMin }}";
+	var STF = "{{ thisResource.startTimeFormat }}";
+	var ETH = "{{ thisResource.endTimeHour }}";
+	var ETM = "{{ thisResource.endTimeMin }}";
+	var ETF = "{{ thisResource.endTimeFormat }}";
+	setDefaultValues(document.getElementById("STH"), STH);
+	setDefaultValues(document.getElementById("STM"), STM);
+	setDefaultValues(document.getElementById("STF"), STF);
+	setDefaultValues(document.getElementById("ETH"), ETH);
+	setDefaultValues(document.getElementById("ETM"), ETM);
+	setDefaultValues(document.getElementById("ETF"), ETF);
+	</script>
 	</body>
 </html>
 {% endautoescape %}	

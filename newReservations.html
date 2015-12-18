@@ -27,7 +27,7 @@
 		<br>
     <form action="{{ resourceName }}" method="post">
       Start Time : 
-		<select name="StartTimeHour">
+		<select id = "STH" name="StartTimeHour">
 		  <option value="1">1</option>
 		  <option value="2">2</option>
 		  <option value="3">3</option>
@@ -41,7 +41,7 @@
 		  <option value="11">11</option>
 		  <option value="12">12</option>
 		</select>
-		<select name="StartTimeMin">
+		<select id = "STM" name="StartTimeMin">
 		  <option value="00">00</option>
 		  <option value="01">01</option>
 		  <option value="02">02</option>
@@ -103,13 +103,13 @@
 		  <option value="58">58</option>
 		  <option value="59">59</option>
 		</select>
-		<select name="StartTimeFormat">
+		<select id = "STF" name="StartTimeFormat">
 		  <option value="AM">AM</option>
 		  <option value="PM">PM</option>
 		</select>
 		<br>
       Duration : 
-		<select name="DurationHour">
+		<select id = "DH" name="DurationHour">
 		  <option value="0">0</option>
 		  <option value="1">1</option>
 		  <option value="2">2</option>
@@ -136,7 +136,7 @@
 		  <option value="23">23</option>
 		</select>
 		hrs
-		<select name="DurationMin">
+		<select id = "DMi" name="DurationMin">
 		  <option value="00">00</option>
 		  <option value="01">01</option>
 		  <option value="02">02</option>
@@ -201,7 +201,7 @@
 		mins
 		<br>
       Date : 
-		<select name="DateDay">
+		<select id = "DD" name="DateDay">
 		  <option value="01">01</option>
 		  <option value="02">02</option>
 		  <option value="03">03</option>
@@ -234,7 +234,7 @@
 		  <option value="30">30</option>
 		  <option value="31">31</option>
 		</select>
-		<select name="DateMonth">
+		<select id = "DMo" name="DateMonth">
 		  <option value="01">01</option>
 		  <option value="02">02</option>
 		  <option value="03">03</option>
@@ -248,7 +248,7 @@
 		  <option value="11">11</option>
 		  <option value="12">12</option>
 		</select>
-		<select name="DateYear">
+		<select id = "DY" name="DateYear">
 		  <option value="2015">15</option>
 		  <option value="2016">16</option>
 		  <option value="2017">17</option>
@@ -262,6 +262,36 @@
 		<a href="/" style = "float:left">Back to Home Page</a>
 		<a href="{{ url|safe }}" style = "float:right">{{ url_linktext }}</a>
 	</div>
+	<script>
+    function setDefaultValues(s, valsearch)
+    {
+		for (i = 0; i< s.options.length; i++)
+		{ 
+			if (s.options[i].value == valsearch)
+			{
+				s.options[i].selected = true;
+				break;
+			}
+		}
+		return;			
+	}
+	var STH = "{{ StartTimeHour }}";
+	var STM = "{{ StartTimeMin }}";
+	var STF = "{{ StartTimeFormat }}";
+	var DH  = "{{ DurationHour }}";
+	var DMi = "{{ DurationMin }}";
+	var DD  = "{{ DateDay }}";
+	var DMo = "{{ DateMonth }}";
+	var DY  = "{{ DateYear }}";
+	setDefaultValues(document.getElementById("STH"), STH);
+	setDefaultValues(document.getElementById("STM"), STM);
+	setDefaultValues(document.getElementById("STF"), STF);
+	setDefaultValues(document.getElementById("DH"), DH);
+	setDefaultValues(document.getElementById("DMi"), DMi);
+	setDefaultValues(document.getElementById("DD"), DD);
+	setDefaultValues(document.getElementById("DMo"), DMo);
+	setDefaultValues(document.getElementById("DY"), DY);
+	</script>
   </body>
 </html>
 {% endautoescape %}
