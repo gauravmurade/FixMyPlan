@@ -470,7 +470,7 @@ class Resources(webapp2.RequestHandler):
 			for reservation in allReservations:
 				reservation.name = ResourceName
 				reservation.put()
-			self.redirect('/resources/' + thisResource.name)
+			self.redirect('/resources/' + ResourceName)
 
 class NewReservations(webapp2.RequestHandler):
     def get(self):
