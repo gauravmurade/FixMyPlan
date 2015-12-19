@@ -1,6 +1,7 @@
 # Punctuation in string inputs
-# Check for inequality in filters and if they work
 # Check order of display
+# Comments
+# Case sensitivyoty for tags and resorce names
 
 import os
 import urllib
@@ -91,13 +92,31 @@ class MainPage(webapp2.RequestHandler):
 			guestbook_name = self.request.get('guestbook_name', DEFAULT_GUESTBOOK_NAME)
 
 			myReservations = Reservation.query(Reservation.owner == user.email(), ancestor=guestbook_key(guestbook_name))
+
+			currentTime = datetime.now()
+			currentDate = datetime.today()
+			todaysDate = datetime(year = currentDate.year, month = currentDate.month, day = currentDate.day)
+			epochTime = datetime(year = 1900, month = 1, day = 1, hour = currentTime.hour, minute = currentTime.minute, second = currentTime.second)
+
 			myActiveReservations = myReservations.filter(ndb.OR(
-				Reservation.date > datetime.today(),
-				ndb.AND(Reservation.date == datetime.today(), 
-				Reservation.endTime > datetime.now()),
+				Reservation.date > todaysDate,
+				ndb.AND(Reservation.date == todaysDate, 
+				Reservation.endTime > epochTime),
 				)).order(Reservation.date).order(Reservation.endTime)
+
+
 			myResources = Resource.query(Resource.owner == user.email(), ancestor= guestbook_key(guestbook_name))
-			allResources = Resource.query(ancestor=guestbook_key(guestbook_name))
+
+			allResources = []
+			sabResources = Resource.query(ancestor=guestbook_key(guestbook_name))
+			sabReservations = Reservation.query(ancestor=guestbook_key(guestbook_name)).order(Reservation.date).order(Reservation.endTime)
+			for res in sabReservations:
+				if res.name not in allResources:
+					allResources.append(res.name)
+			allResources = allResources[::-1]
+			for res in sabResources:
+				if res.name not in allResources:
+					allResources.append(res.name)
 			template_values = {
 				'myResources': myResources,
 				'myActiveReservations': myActiveReservations,
@@ -127,10 +146,16 @@ class User(webapp2.RequestHandler):
 			url_linktext = 'Logout'
 			guestbook_name = self.request.get('guestbook_name', DEFAULT_GUESTBOOK_NAME)
 			myReservations = Reservation.query(Reservation.owner == user.email(), ancestor=guestbook_key(guestbook_name))
+
+			currentTime = datetime.now()
+			currentDate = datetime.today()
+			todaysDate = datetime(year = currentDate.year, month = currentDate.month, day = currentDate.day)
+			epochTime = datetime(year = 1900, month = 1, day = 1, hour = currentTime.hour, minute = currentTime.minute, second = currentTime.second)
+
 			myActiveReservations = myReservations.filter(ndb.OR(
-				Reservation.date > datetime.today(),
-				ndb.AND(Reservation.date == datetime.today(), 
-				Reservation.endTime > datetime.now()),
+				Reservation.date > todaysDate,
+				ndb.AND(Reservation.date == todaysDate, 
+				Reservation.endTime > epochTime),
 				)).order(Reservation.date).order(Reservation.endTime)
 			myResources = Resource.query(Resource.owner == user.email(), ancestor= guestbook_key(guestbook_name))
 			allResources = Resource.query(ancestor=guestbook_key(guestbook_name))
@@ -282,31 +307,24 @@ class Resources(webapp2.RequestHandler):
 			logging.debug(tagString)
 
 			allReservations = Reservation.query(Reservation.name == words[4], ancestor=guestbook_key(guestbook_name))
-			'''
+
+			currentTime = datetime.now()
+			currentDate = datetime.today()
+			todaysDate = datetime(year = currentDate.year, month = currentDate.month, day = currentDate.day)
+			epochTime = datetime(year = 1900, month = 1, day = 1, hour = currentTime.hour, minute = currentTime.minute, second = currentTime.second)
+
 			activeReservations = allReservations.filter(ndb.OR(
-				Reservation.dateYear > datetime.now().year,
-				ndb.AND(Reservation.dateYear == datetime.now().year, 
-				Reservation.dateMonth > datetime.now().month),
-				ndb.AND(Reservation.dateYear == datetime.now().year, 
-				Reservation.dateMonth == datetime.now().month,
-				Reservation.dateDay > datetime.now().day),
-				ndb.AND(Reservation.dateYear == datetime.now().year, 
-				Reservation.dateMonth == datetime.now().month,
-				Reservation.dateDay == datetime.now().day,
-				Reservation.startTimeHour > datetime.now().hour),
-				ndb.AND(Reservation.dateYear == datetime.now().year, 
-				Reservation.dateMonth == datetime.now().month,
-				Reservation.dateDay == datetime.now().day,
-				Reservation.startTimeHour == datetime.now().hour,
-				Reservation.startTimeMin == datetime.now().minute),
+				Reservation.date > todaysDate,
+				ndb.AND(Reservation.date == todaysDate, 
+				Reservation.endTime > epochTime),
 				))
-			'''
-			activeReservations = allReservations.filter(ndb.OR(
-				Reservation.date > datetime.today(),
-				ndb.AND(Reservation.date == datetime.today(), 
-				Reservation.endTime > datetime.now()),
-				))
-			logging.debug(words)
+
+			for res in allReservations:
+				logging.debug(res.date)
+				logging.debug(res.endTime)
+			logging.debug(todaysDate)
+			logging.debug(epochTime)
+
 			logging.debug(allReservations.count())
 			logging.debug(activeReservations.count())
 			createReservationURL = '/reservations/' + words[4]
@@ -385,7 +403,7 @@ class Resources(webapp2.RequestHandler):
 			logging.debug(ResourceEndTime)
 			logging.debug(ResourceStartTime)
 			errorNo = 2
-		elif checkIfResourceAlreadyExists.count() > 0:
+		elif ResourceName != words[4] and checkIfResourceAlreadyExists.count() > 0:
 			errorNo = 3
 		
 		if errorNo > 0:
@@ -398,10 +416,16 @@ class Resources(webapp2.RequestHandler):
 			logging.debug(tagString)
 
 			allReservations = Reservation.query(Reservation.name == words[4], ancestor=guestbook_key(guestbook_name))
+
+			currentTime = datetime.now()
+			currentDate = datetime.today()
+			todaysDate = datetime(year = currentDate.year, month = currentDate.month, day = currentDate.day)
+			epochTime = datetime(year = 1900, month = 1, day = 1, hour = currentTime.hour, minute = currentTime.minute, second = currentTime.second)
+
 			activeReservations = allReservations.filter(ndb.OR(
-				Reservation.date > datetime.today(),
-				ndb.AND(Reservation.date == datetime.today(), 
-				Reservation.endTime > datetime.now()),
+				Reservation.date > todaysDate,
+				ndb.AND(Reservation.date == todaysDate, 
+				Reservation.endTime > epochTime),
 				))
 			createReservationURL = '/reservations/' + words[4]
 
@@ -516,6 +540,7 @@ class NewReservations(webapp2.RequestHandler):
 		elif DurationHour == "0" and DurationMin == "00":
 			errorNo = 1
 		elif (ReservationDate.date() < datetime.today().date()) or (ReservationDate.date() == datetime.today().date() and ReservationStartTime.time() < datetime.now().time()):
+			logging.debug(datetime.now().time())
 			errorNo = 2
 		elif ReservationEndTime.date() > ReservationStartTime.date():
 			errorNo = 3

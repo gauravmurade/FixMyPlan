@@ -34,8 +34,8 @@
 		{% if homePage != 0 %}
 			<strong>Resources available in the system :</strong>
 				<br>
-				{% for resource in allResources %}
-					<a href="/resources/{{ resource.name }} "> {{ resource.name }} </a>
+				{% for resourceName in allResources %}
+					<a href="/resources/{{ resourceName }} "> {{ resourceName }} </a>
 				{% endfor %}
 			<br>
 		{% endif %}

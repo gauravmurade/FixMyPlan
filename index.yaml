@@ -103,6 +103,12 @@ indexes:
   ancestor: yes
   properties:
   - name: date
+  - name: endTime
+
+- kind: Reservation
+  ancestor: yes
+  properties:
+  - name: date
   - name: name
   - name: endTime
 
@@ -132,6 +138,13 @@ indexes:
   - name: owner
   - name: date
   - name: endTime
+
+- kind: Reservation
+  ancestor: yes
+  properties:
+  - name: owner
+  - name: date
+  - name: startTime
 
 - kind: Resource
   ancestor: yes

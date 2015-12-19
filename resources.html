@@ -194,7 +194,8 @@
 		</div>	
 
 		<div id="NonEditableView" style = "border-style: none;">
-			Resource Name : {{ thisResource.name }}
+			Resource Name :
+			<a href="/resources/{{ thisResource.name }} "> {{ thisResource.name }} </a>
 			<br>
 			Start Time : {{ thisResource.startTimeDisp }}
 			<br>
@@ -229,9 +230,9 @@
 			<br>
 		{% endfor %}
 
-		<a href="/rss/{{ thisResource.name }}">RSS Reservation Feed</a>
-		<br>
 		<a href="{{ createReservationURL }}">Create a reservation</a>
+		<br>
+		<a href="/rss/{{ thisResource.name }}">RSS Reservation Feed</a>
 	</div>
 	<div id="business">
 		<a href="/" style = "float:left">Back to Home Page</a>
