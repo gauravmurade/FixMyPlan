@@ -21,7 +21,7 @@
 		<br>
 		<br>
     <form action="/resources" method="post">
-      Resource Name : <input class = "tab" name="name" rows="1" cols="15"></input>
+      Resource Name : <input class = "tab" name="name" rows="1" cols="15" value = {{ ResourceName }} ></input>
 		<br>
       Start Time : 
 		<select id = "STH" name="StartTimeHour" class = "tab">
@@ -187,7 +187,7 @@
 		  <option value="PM">PM</option>
 		</select>
 		<br>
-      Enter Tags : <input name="tags" rows="1" cols="15"></input>
+      Enter Tags : <input name="tags" rows="1" cols="15" value = "{{ ResourceTags }}" ></input>
 		<br>
 		<br>
       <input type="submit" value="Create the resource">

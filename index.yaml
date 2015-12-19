@@ -99,6 +99,40 @@ indexes:
   - name: resource.name
   - name: date
 
+- kind: Reservation
+  ancestor: yes
+  properties:
+  - name: date
+  - name: name
+  - name: endTime
+
+- kind: Reservation
+  ancestor: yes
+  properties:
+  - name: date
+  - name: name
+  - name: startTime
+
+- kind: Reservation
+  ancestor: yes
+  properties:
+  - name: date
+  - name: owner
+  - name: endTime
+
+- kind: Reservation
+  ancestor: yes
+  properties:
+  - name: name
+  - name: date
+
+- kind: Reservation
+  ancestor: yes
+  properties:
+  - name: owner
+  - name: date
+  - name: endTime
+
 - kind: Resource
   ancestor: yes
   properties:

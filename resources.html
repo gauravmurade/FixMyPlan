@@ -10,11 +10,11 @@
     </div>	
 	<div id="content">
 	{% if owner  %}
-		<form action="/resources" method="post">
-		  Resource Name : <input name="name" rows="1" cols="15"></input>
+		<form action="/resources/{{ thisResource.name }}" method="post">
+		  Resource Name : <input name="name" rows="1" cols="15" value = {{ thisResource.name }} disabled="true"></input>
 			<br>
 		  Start Time : 
-			<select id = "STH" name="StartTimeHour">
+			<select id = "STH" name="StartTimeHour" disabled="true">
 			  <option value="01">01</option>
 			  <option value="02">02</option>
 			  <option value="03">03</option>
@@ -28,7 +28,7 @@
 			  <option value="11">11</option>
 			  <option value="12">12</option>
 			</select>
-			<select id = "STM" name="StartTimeMin">
+			<select id = "STM" name="StartTimeMin" disabled="true">
 			  <option value="00">00</option>
 			  <option value="01">01</option>
 			  <option value="02">02</option>
@@ -90,13 +90,13 @@
 			  <option value="58">58</option>
 			  <option value="59">59</option>
 			</select>
-			<select id = "STF" name="StartTimeFormat">
+			<select id = "STF" name="StartTimeFormat" disabled="true">
 			  <option value="AM">AM</option>
 			  <option value="PM">PM</option>
 			</select>
 			<br>
 		  End Time : 
-			<select id = "ETH" name="EndTimeHour">
+			<select id = "ETH" name="EndTimeHour" disabled="true">
 			  <option value="01">01</option>
 			  <option value="02">02</option>
 			  <option value="03">03</option>
@@ -110,7 +110,7 @@
 			  <option value="11">11</option>
 			  <option value="12">12</option>
 			</select>
-			<select id = "ETM" name="EndTimeMin">
+			<select id = "ETM" name="EndTimeMin" disabled="true">
 			  <option value="00">00</option>
 			  <option value="01">01</option>
 			  <option value="02">02</option>
@@ -172,14 +172,15 @@
 			  <option value="58">58</option>
 			  <option value="59">59</option>
 			</select>
-			<select id = "ETF" name="EndTimeFormat">
+			<select id = "ETF" name="EndTimeFormat" disabled="true">
 			  <option value="AM">AM</option>
 			  <option value="PM">PM</option>
 			</select>
 			<br>
-		  Enter Tags : <input name="tags" rows="1" cols="15"></input>
+			  Enter Tags : <input name="tags" rows="1" cols="15" value = "{{ tagString }}" disabled="true"></input>
 			<br>
-		  <input type="submit" value="Edit the resource">
+			<br>
+		  <input type="submit" value="Edit my resource details">
 		</form>
 	{% else  %}
 		<strong>Resource Details :</strong>
@@ -204,7 +205,7 @@
 		<br>
 		{% for activeReservation in activeReservations %}
 			Reserved by : 
-			<a href="/user"> {{ myReservation.owner }} </a>
+			<a href="/user"> {{ activeReservation.owner }} </a>
 			<br>
 			Resource Name : 
 			<a href="/resources/{{ activeReservation.name }} "> {{ activeReservation.name }} </a>

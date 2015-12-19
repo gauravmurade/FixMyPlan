@@ -8,7 +8,7 @@
                 font-size: 55px;
                 border-bottom: none;
                 text-align: left;
-                background-color: #000000;
+                background-color: #4B0082;
                 font-family: 'Aladin';
                 color: white;
             }
@@ -16,7 +16,7 @@
             div#content {
                 padding: 10px;
                 padding-top: 5px;
-                background-color: #A4A4A4;
+                background-color: #b19cd9;
                 color: black;
                 font-size: 22px;
                 font-family: 'Gabriela';
@@ -27,7 +27,7 @@
                 font-size: 30px;
                 height: 40px;
                 padding: 10px;
-                background-color: #A4A4A4;
+                background-color: #b19cd9;
                 font-family: 'Share Tech Mono';
                 color: #000000;
                 border-top: none;

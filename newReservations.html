@@ -21,6 +21,8 @@
 		<p style="color:red;">Your reservation must fall within the resource available times!</p>
 	{% elif errorNo == 6 %}
 		<p style="color:red;">End Time cannot be less than or equal to the Start Time!</p>
+	{% elif errorNo == 7 %}
+		<p style="color:red;">Select a valid date!</p>
 	{% endif %}	
 	<strong>Please Enter the following details :</strong>
 		<br>
@@ -235,18 +237,18 @@
 		  <option value="31">31</option>
 		</select>
 		<select id = "DMo" name="DateMonth">
-		  <option value="01">01</option>
-		  <option value="02">02</option>
-		  <option value="03">03</option>
-		  <option value="04">04</option>
-		  <option value="05">05</option>
-		  <option value="06">06</option>
-		  <option value="07">07</option>
-		  <option value="08">08</option>
-		  <option value="09">09</option>
-		  <option value="10">10</option>
-		  <option value="11">11</option>
-		  <option value="12">12</option>
+		  <option value="01">Jan</option>
+		  <option value="02">Feb</option>
+		  <option value="03">Mar</option>
+		  <option value="04">Apr</option>
+		  <option value="05">May</option>
+		  <option value="06">June</option>
+		  <option value="07">July</option>
+		  <option value="08">Aug</option>
+		  <option value="09">Sept</option>
+		  <option value="10">Oct</option>
+		  <option value="11">Nov</option>
+		  <option value="12">Dec</option>
 		</select>
 		<select id = "DY" name="DateYear">
 		  <option value="2015">15</option>
