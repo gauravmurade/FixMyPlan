@@ -1,7 +1,6 @@
 # Punctuation in string inputs
-# Check for inequality in filters
-# Deploy
-# No tag on resource if owner
+# Check for inequality in filters and if they work
+# Check order of display
 
 import os
 import urllib
@@ -320,6 +319,7 @@ class Resources(webapp2.RequestHandler):
 			url = users.create_logout_url(self.request.uri)
 			url_linktext = 'Logout'
 			template_values = {
+				'errorNo': 0,
 				'owner': owner,
 				'user': user,
 				'thisResource': thisResource,
@@ -348,7 +348,8 @@ class Resources(webapp2.RequestHandler):
 		# While adding a new resource, name must be entered
 		# Resource end time cannot be smaller than start time
 		# Resource name should be unique
-		guestbook_name = self.request.get('guestbook_name', DEFAULT_GUESTBOOK_NAME)
+		user = users.get_current_user()
+		words = (self.request.url).split("/")
 		ResourceName = self.request.get('name').strip()
 		StartTimeHour = self.request.get('StartTimeHour')
 		StartTimeMin = self.request.get('StartTimeMin')
@@ -364,6 +365,7 @@ class Resources(webapp2.RequestHandler):
 
 		ResourceTags = self.request.get('tags').strip()
 
+		guestbook_name = self.request.get('guestbook_name', DEFAULT_GUESTBOOK_NAME)
 		checkIfResourceAlreadyExists = Resource.query(Resource.name == ResourceName, ancestor=guestbook_key(guestbook_name))
 		
 		logging.debug(ResourceName)
@@ -387,45 +389,64 @@ class Resources(webapp2.RequestHandler):
 			errorNo = 3
 		
 		if errorNo > 0:
+
+			thisResource = Resource.query(Resource.name == words[4], ancestor=guestbook_key(guestbook_name)).get()
+			tagString = ''
+			for tag in thisResource.tags:
+				tagString += tag + ' '
+			tagString.strip()
+			logging.debug(tagString)
+
+			allReservations = Reservation.query(Reservation.name == words[4], ancestor=guestbook_key(guestbook_name))
+			activeReservations = allReservations.filter(ndb.OR(
+				Reservation.date > datetime.today(),
+				ndb.AND(Reservation.date == datetime.today(), 
+				Reservation.endTime > datetime.now()),
+				))
+			createReservationURL = '/reservations/' + words[4]
+
+			if thisResource.owner == user.email() :
+				owner = 1
+			else:
+				owner = 0
+
 			url = users.create_logout_url(self.request.uri)
 			url_linktext = 'Logout'
-			logging.debug("Yes, there is an error")
 			template_values = {
 				'errorNo': errorNo,
+				'owner': owner,
+				'user': user,
+				'thisResource': thisResource,
+				'tagString': tagString,
+				'activeReservations': activeReservations,
+				'createReservationURL' : createReservationURL,
 				'url': url,
 				'url_linktext': url_linktext,
-				'ResourceName': ResourceName,
-				'StartTimeHour': StartTimeHour,
-				'StartTimeMin': StartTimeMin,
-				'StartTimeFormat': StartTimeFormat,
-				'EndTimeHour': EndTimeHour,
-				'EndTimeMin': EndTimeMin,
-				'EndTimeFormat': EndTimeFormat,
-				'ResourceTags': ResourceTags,
 			}
-			template = JINJA_ENVIRONMENT.get_template('newresources.html')
+			template = JINJA_ENVIRONMENT.get_template('resources.html')
 			self.response.write(template.render(template_values))
 		else:
-			guestbook_name = self.request.get('guestbook_name', DEFAULT_GUESTBOOK_NAME)
-			newResource = Resource(parent=guestbook_key(guestbook_name))
-			newResource.owner = users.get_current_user().email()
-			newResource.name = ResourceName
-
-			newResource.startTimeHour = StartTimeHour
-			newResource.startTimeMin = StartTimeMin
-			newResource.startTimeFormat = StartTimeFormat
-			newResource.startTime = ResourceStartTime
-			newResource.startTimeDisp = datetime.strftime(newResource.startTime, "%I:%M %p")
+			thisResource = Resource.query(Resource.name == words[4], ancestor=guestbook_key(guestbook_name)).get()			
+			thisResource.name = ResourceName
+			thisResource.startTimeHour = StartTimeHour
+			thisResource.startTimeMin = StartTimeMin
+			thisResource.startTimeFormat = StartTimeFormat
+			thisResource.startTime = ResourceStartTime
+			thisResource.startTimeDisp = datetime.strftime(thisResource.startTime, "%I:%M %p")
 			
-			newResource.endTimeHour = EndTimeHour
-			newResource.endTimeMin = EndTimeMin
-			newResource.endTimeFormat = EndTimeFormat
-			newResource.endTime = ResourceEndTime
-			newResource.endTimeDisp = datetime.strftime(newResource.endTime, "%I:%M %p")
+			thisResource.endTimeHour = EndTimeHour
+			thisResource.endTimeMin = EndTimeMin
+			thisResource.endTimeFormat = EndTimeFormat
+			thisResource.endTime = ResourceEndTime
+			thisResource.endTimeDisp = datetime.strftime(thisResource.endTime, "%I:%M %p")
 
-			newResource.tags = ResourceTags.split()
-			newResource.put()
-			self.redirect('/resources/' + newResource.name)
+			thisResource.tags = ResourceTags.split()
+			thisResource.put()
+			allReservations = Reservation.query(Reservation.name == words[4], ancestor=guestbook_key(guestbook_name))
+			for reservation in allReservations:
+				reservation.name = ResourceName
+				reservation.put()
+			self.redirect('/resources/' + thisResource.name)
 
 class NewReservations(webapp2.RequestHandler):
     def get(self):
